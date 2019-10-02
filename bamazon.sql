@@ -11,7 +11,7 @@ CREATE TABLE products (
     departemnt_name VARCHAR(75) NOT NULL,
     price INT(10,2) NOT NULL,
     stock_quantity INT (4)
-    PRIMARY KEY()
+    PRIMARY KEY(id)
 );
 
 INSERT INTO products(items_id,product_name,deparment_name, price,stock_quantity )
