@@ -1,6 +1,6 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
-
+var cartTotal = 0;
 var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -9,9 +9,13 @@ var connection = mysql.createConnection({
 });
 
 connection.connect();
-connection.query("SELECT * FROM products", function (err, result) {
-  console.table(result);
-  inquirer
+
+function start(){
+
+  
+  connection.query("SELECT * FROM products", function (err, result) {
+    console.table(result);
+    inquirer
     .prompt([
       {
         type: "input",
@@ -26,12 +30,13 @@ connection.query("SELECT * FROM products", function (err, result) {
     ])
     .then(function (answers) {
       console.log(answers)
-      connection.query(`SELECT * FROM products WHERE items_id=?`, [answers.productID], function (error, results) {
+      connection.query(`SELECT * FROM products WHERE id=?`, [answers.productID], function (error, results) {
         if (error) throw error;
         console.log('The solution is: ', results[0].stock_quantity);
-
+        
         if (parseInt(answers.quantity) <= parseInt(results[0].stock_quantity)) {
           console.log("Enough in stock placing order")
+        cartTotal +=  results[0].price;
           //update database
           var newQuantity = parseInt(results[0].stock_quantity) - parseInt(answers.quantity);
           console.log(newQuantity);
@@ -42,25 +47,41 @@ connection.query("SELECT * FROM products", function (err, result) {
                 stock_quantity: newQuantity
               },
               {
-                items_id: answers.productID
+                id: answers.productID
               }
             ],
             function (error) {
               if (error) throw err;
-              console.log("Bid placed successfully!");
-              // start();
-              connection.query("SELECT * FROM products", function (err, result) {
-                console.table(result);
-              })
+              console.log("Order made enjoy!!");
+               inquirer.prompt([
+                 {
+                   type:"list",
+                   name:"ContinueOrEnd",
+                   message:"Would you like to choose any more items?",
+                   choices:["yes","no"]
+                 }
+               ]).then(function(answers){
+                 if(answers["ContinueOrEnd"] === "yes"){
+                  start();
+                 }else{
+                   connection.end();
+                   console.log("Thanks for shopping, your total is:" + cartTotal);
+                 }
+               })
+            //  connection.query("SELECT * FROM products", function (err, result) {
+               // console.table(result);
+          //    })
             })
-        } else {
+          } else {
           console.log("over quantity value")
         }
       });
     }
     );
-})
+  })
+}
 
+start();
   //TODO:Check if theres enough of the product in stock to place the order for the customer
 
   //TODO:if there isn't enough of the product tell the customer 'insufficient quantity' and prevent the order from happening
