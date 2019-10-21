@@ -14,6 +14,14 @@
 3. run the program by right clicking the `bamazonCustomer.js` file and select `open new Terminal` once the terminal opens up run this command in the terminal `node bamazonCustomer.js` then follow the on screen prompts from there on. (When the program starts up you'll be asked to input the item id. Use the id column no the items_id)
 
 <!-- add demo images here -->
+Update your password
+![password update](./images/passwordUpdate.png)
+
+How to run the program
+![How to run the program](./images/runProgramEx.png)
+
+How Program Looks Running
+![Movie demo](./images/workingProgram.png)
 
 <!-- add demo images here -->
 
